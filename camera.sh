@@ -23,9 +23,14 @@ do
 	# Check for shutter button
 	if [ $(gpio -g read $SHUTTER) -eq 0 ]; then
 		gpio -g write $LED 1
-		#Print marketing message
-		echo "Welcome to #RVMMF\\nGet your photo at:\\nroguehacklab.com/photobooth/\\n\\n\\n" > /dev/ttyAMA0
+		#set file name to save as
+		#take picture, save, commit, push
+		#raspistill docs at https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
+		#might use this command to scale picture: lpr -o fit-to-page /usr/share/raspberrypi-artwork/raspberry-pi-logo.png
+		#print picture
 		raspistill -n -t 200 -w 512 -h 384 -o - | lp
+		#Print marketing message
+		echo "Welcome to #RVMMF\\nDownload your photo at:\\nroguehacklab.com/photobooth/\\n\\n\\n" | lpr
 		sleep 1
 		# Wait for user to release button before resuming
 		while [ $(gpio -g read $SHUTTER) -eq 0 ]; do continue; done
