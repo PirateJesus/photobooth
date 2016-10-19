@@ -23,9 +23,9 @@ do
 	# Check for shutter button
 	if [ $(gpio -g read $SHUTTER) -eq 0 ]; then
 		gpio -g write $LED 1
-		raspistill -n -t 200 -w 512 -h 384 -o - | lp
 		#Print marketing message
-		echo -e "@roguehacklab #RVMMF\\nroguehacklab.com/photobooth/\\n\\n\\n" > /dev/ttyAMA0
+		echo "Welcome to #RVMMF\\nGet your photo at:\\nroguehacklab.com/photobooth/\\n\\n\\n" > /dev/ttyAMA0
+		raspistill -n -t 200 -w 512 -h 384 -o - | lp
 		sleep 1
 		# Wait for user to release button before resuming
 		while [ $(gpio -g read $SHUTTER) -eq 0 ]; do continue; done
