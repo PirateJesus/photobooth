@@ -3,6 +3,7 @@
 SHUTTER=23
 HALT=7
 LED=24
+EVENT=rvmmf16
 
 # Initialize GPIO states
 gpio -g mode  $SHUTTER up
@@ -23,15 +24,39 @@ do
 	# Check for shutter button
 	if [ $(gpio -g read $SHUTTER) -eq 0 ]; then
 		gpio -g write $LED 1
+		echo "Running photo process"
+		
 		#Print marketing message
 		echo "Welcome to #RVMMF\\nDownload your photo at:\\nroguehacklab.com/photobooth/\\n" > /dev/ttyAMA0
+		
 		#set file name to save as
-		#take picture, save, commit, push
-		#raspistill docs at https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
-		#might use this command to scale picture: lpr -o fit-to-page /usr/share/raspberrypi-artwork/raspberry-pi-logo.png
+		PICID=$(cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+		#avoid duplicates by checking if file exists
+		while [ -e ./events/$EVENT/$PICID.jpg ]
+		do
+			echo "File $PICID.jpg exists picking a new name"
+			PICID=$(cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+		done
+		
+		#take picture - https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
+		raspistill -n -t 100 -e jpg -o ./events/$EVENT/$PICID.jpg
+		echo "Photo saved to ./events/$EVENT/$PICID.jpg"
+		
 		#print picture
-		raspistill -n -t 200 -w 512 -h 384 -o - | lp
-		sleep 1
+		lpr -o fit-to-page ./events/$EVENT/$PICID.jpg
+		#raspistill -n -t 200 -w 512 -h 384 -o - | lp
+		
+		#check for internet to sync photos
+		if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then
+		  echo "IPv4 is up - syncing photos"
+		  #rsync ./events/$EVENT/ photobooth@srv.roguehacklab.com/events/$EVENT
+		else
+		  echo "IPv4 is down - no sync"
+		fi
+		
+		#Wait for printout to finish before allowing more photos
+		#while [ lpq -eq 0 ]; do continue; done		
+
 		# Wait for user to release button before resuming
 		while [ $(gpio -g read $SHUTTER) -eq 0 ]; do continue; done
 		gpio -g write $LED 0
@@ -49,3 +74,15 @@ do
 		done
 	fi
 done
+
+
+
+
+
+
+
+
+
+
+
+
