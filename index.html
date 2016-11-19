@@ -1,4 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <h1>Hello World... I'm a photo booth"</h1>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="favicon.ico">
+
+	<title>RHL Photo Booth</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+
+	<!-- Custom styles for this template -->
+	<link href="cover.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<div class="site-wrapper">
+
+		<div class="site-wrapper-inner">
+
+			<div class="cover-container">
+
+				<div class="masthead clearfix">
+					<div class="inner">
+						<h3 class="masthead-brand">RHL Photo Booth</h3>
+					</div>
+				</div>
+
+				<div class="inner cover">
+					<h1 class="cover-heading">View your photo</h1>
+					<p class="lead">
+						Enter your photo ID to download it
+					</p>
+					<p>
+						<input type="text" id="photo_id"> <button class="btn btn-sucess" onclick="load_photo()">Go</button>
+					</p>
+					<div id="photo_holder"></div>
+					<div class="mastfoot">
+						<div class="inner">
+							<p>Think this is cool? Get involved with <a href="http://roguehacklab.com">Rogue Hack Lab</a>.</p>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-50519192-2', 'roguehacklab.com');
+		ga('send', 'pageview');
+	</script>
+
+	<script>
+		function load_photo() {
+			var id = $('#photo_id').val();
+			id = id.toUpperCase();
+			id = id.replace(/0/g, "O");
+
+			$.get("http://images.roguehacklab.com/" + id + ".jpg")
+			.done(function() { 
+				$('#photo_holder').html("<img src=\"http://images.roguehacklab.com/" + id + ".jpg\">");
+			}).fail(function() { 
+				$('#photo_holder').html("<div class=\"alert alert-danger\" role=\"alert\"><strong>Photo not found!</strong><br/>If you have a valid code and your photo was not found please check back after 8 P.M. the photos might not have been uploaded yet.</div>");
+			})
+
+		}
+
+		$("#photo_id").on("keydown",function search(e) {
+			if(e.keyCode == 13) {
+				load_photo();
+			}
+		});
+	</script>
+
+</body>
 </html>
