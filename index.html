@@ -77,7 +77,7 @@
 
 			$.get("http://images.roguehacklab.com/" + id + ".jpg")
 			.done(function() { 
-				$('#photo_holder').html("<img src=\"http://images.roguehacklab.com/" + id + ".jpg\">");
+				$('#photo_holder').html("<img class=\"w-100\" src=\"http://images.roguehacklab.com/" + id + ".jpg\">");
 			}).fail(function() { 
 				$('#photo_holder').html("<div class=\"alert alert-danger\" role=\"alert\"><strong>Photo not found!</strong><br/>If you have a valid code and your photo was not found please check back after 8 P.M. the photos might not have been uploaded yet.</div>");
 			})
